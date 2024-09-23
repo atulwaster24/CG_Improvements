@@ -33,7 +33,7 @@ jobs:
           chmod 400 ec2-key.pem
           
           # Copy files to EC2 instance
-          scp -o StrictHostKeyChecking=no -i ec2-key.pem -r . ubuntu@ec2-3-109-123-34.ap-south-1.compute.amazonaws.com:/home/ubuntu/CG_Website_Beta
+          scp -o StrictHostKeyChecking=no -i ec2-key.pem -r ubuntu@ec2-3-109-123-34.ap-south-1.compute.amazonaws.com:/home/ubuntu/CG_Website_Beta
 
       - name: SSH into EC2 and restart the app
         run: |
