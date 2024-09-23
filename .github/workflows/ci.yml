@@ -1,0 +1,31 @@
+name: Next.js CI/CD
+
+on:
+  push:
+    branches:
+      - main  # Trigger when code is pushed to the main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'  # Specify the Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+
+      - name: Build project
+        run: npm run build  # This will run the Next.js build command
+
+      - name: Deploy to Production
+        run: npm run deploy
+        secrets: 
+            NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
