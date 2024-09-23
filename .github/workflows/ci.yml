@@ -1,4 +1,4 @@
-name: Next.js CI/CD
+name: CG_Website_Beta CI/CD
 
 on:
   push:
@@ -33,21 +33,30 @@ jobs:
           chmod 400 ec2-key.pem
           
           # Copy files to EC2 instance
-          scp -i ec2-key.pem -r . ubuntu@ec2-your-ec2-ip.compute-1.amazonaws.com:/home/ubuntu/next-app
+          scp -o StrictHostKeyChecking=no -i ec2-key.pem -r . ubuntu@ec2-3-109-123-34.ap-south-1.compute.amazonaws.com:/home/ubuntu/CG_Website_Beta
 
       - name: SSH into EC2 and restart the app
         run: |
-          ssh -i ec2-key.pem ubuntu@ec2-your-ec2-ip.compute-1.amazonaws.com << 'EOF'
-            cd /home/ubuntu/next-app
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem ubuntu@ec2-3-109-123-34.ap-south-1.compute.amazonaws.com << 'EOF'
+            cd /home/ubuntu/CG_Website_Beta
             
+            # Set environment variable (or source it from an env file)
+            export MONGO_URI=${{ secrets.MONGO_URI }}
+
             # Install dependencies
             npm install
             
-            # Build the project on EC2 (in case you didn't build it locally)
+            # Build the project on EC2 (if needed)
             npm run build
             
+            # Ensure PM2 is installed
+            if ! command -v pm2 &> /dev/null
+            then
+              npm install -g pm2
+            fi
+
             # Restart the Next.js app using PM2
-            pm2 restart next-app || pm2 start npm --name "next-app" -- start
+            pm2 restart CG_Website_Beta || pm2 start npm --name "CG_Website_Beta" -- start
             
             # Save the PM2 process list
             pm2 save
