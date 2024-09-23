@@ -3,10 +3,10 @@ name: Next.js CI/CD
 on:
   push:
     branches:
-      - main  # Trigger when code is pushed to the main branch
+      - main  # Deploy on pushes to the main branch
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,16 +16,42 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20'  # Specify the Node.js version
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
 
-
       - name: Build project
-        run: npm run build  # This will run the Next.js build command
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+        run: npm run build
 
-      - name: Deploy to Production
-        run: npm run deploy
-        # secrets: 
-        #     NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+      - name: Transfer build to EC2
+        run: |
+          # Add SSH private key
+          echo "${{ secrets.EC2_SSH_KEY }}" > ec2-key.pem
+          chmod 400 ec2-key.pem
+          
+          # Copy files to EC2 instance
+          scp -i ec2-key.pem -r . ubuntu@ec2-your-ec2-ip.compute-1.amazonaws.com:/home/ubuntu/next-app
+
+      - name: SSH into EC2 and restart the app
+        run: |
+          ssh -i ec2-key.pem ubuntu@ec2-your-ec2-ip.compute-1.amazonaws.com << 'EOF'
+            cd /home/ubuntu/next-app
+            
+            # Install dependencies
+            npm install
+            
+            # Build the project on EC2 (in case you didn't build it locally)
+            npm run build
+            
+            # Restart the Next.js app using PM2
+            pm2 restart next-app || pm2 start npm --name "next-app" -- start
+            
+            # Save the PM2 process list
+            pm2 save
+          EOF
+
+      - name: Clean up SSH key
+        run: rm ec2-key.pem
