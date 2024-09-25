@@ -16,7 +16,7 @@ function News() {
 
   useEffect(() => {
     const fetchNewsCutouts = async () => {
-      const response = await fetch('/api/news/cutouts');
+      const response = await fetch('/api/news/cutouts', { cache: 'no-store' });
       const data = await response.json();
       const imagePaths = data.map((image) => image.path);
       setPictures(imagePaths);

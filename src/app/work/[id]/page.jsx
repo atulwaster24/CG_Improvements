@@ -11,7 +11,7 @@ export default function Page({ params }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch(`/api/work/${params.id}`);
+      const response = await fetch(`/api/work/${params.id}`, {cache: "no-store"});
       const data = await response.json();
       setData(data);
       setImages(data?.images);

@@ -11,7 +11,7 @@ const Accordian = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/work");
+        const response = await fetch("/api/work", {cache: "no-store"});
         const data = await response.json();
         setWorkData(data);
         setOpen(Array(data.length).fill(false)); // Set initial state with all items closed

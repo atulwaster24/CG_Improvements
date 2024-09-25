@@ -4,18 +4,19 @@ import { useRouter } from "next/navigation";
 
 const CardComponent = ({ data }) => {
   const router = useRouter();
+  console.log(data);
   const handleReadMore = () => {
     router.push(`/work/${data._id}`);
   };
 
   return (
     <div className="max-w-sm min-w-[260px] p-2 md:min-w-[250px] lg:min-w-[400px] min-h-[400px] bg-gray-50 rounded-lg shadow-lg">
-      <a href="#">
+      <a href="">
         {data.images[0] ? <Image src={data.images[0]} width={800} height={0} className="h-auto min-h-[200px] md:max-h-[200px] rounded-t-lg border-2" alt="image" /> : <Image src="/icons/placeholder.webp" width={800} height={0} className="h-auto md:max-h-[200px] rounded-t-lg border-2" alt="image" />}
         
       </a>
       <div className="flex flex-col justify-between gap-10 p-5">
-        <a href="#">
+        <a href="">
           <h5 className="mb-2 text-lg lg:text-2xl font-bold tracking-tight text-black line-clamp-2">
             {data.title}
           </h5>

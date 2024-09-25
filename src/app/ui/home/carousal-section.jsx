@@ -10,8 +10,9 @@ const CarousalSection = () => {
   useEffect(() => {
     const fetchCarouselImages = async () => {
       try {
-        const response = await fetch('/api/home?requestedData=carousal-images');
+        const response = await fetch('/api/home?requestedData=carousal-images', {cache: 'no-store'});
         const data = await response.json();
+        console.log(data)
         setCarouselImages(data);
       } catch (err) {
         setError('Failed to fetch carousel images');
