@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
     try {
         await connectToDB();
-        const data = await works.find();
+        const data = await works.find().sort({ date: -1 });
         return NextResponse.json(data, { status: 200 });
     } catch (error) {
         console.log("Error fetching works:", error);

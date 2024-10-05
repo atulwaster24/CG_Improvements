@@ -21,6 +21,7 @@
     "next-auth": "5.0.0-beta.20",
     "nodemailer": "^6.9.14",
     "react": "^18",
+    "react-bootstrap": "^2.10.5",
     "react-dom": "^18",
     "react-modal": "^3.16.1",
     "sharp": "^0.33.5"

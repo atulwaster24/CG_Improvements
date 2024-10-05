@@ -40,7 +40,7 @@ const Accordian = () => {
         <Loading />
       ) : (
         <div className="w-full grid grid-cols-1 md:grid-cols-2 p-4 gap-4 lg:grid-cols-3 place-items-center gap-y-24">
-          {workData.map((data, index) => (
+          {workData?.map((data, index) => (
             <div key={index}>
               <div onClick={() => toggleDiv(index)}>
                 <CardComponent data={data} isOpen={open[index]} />

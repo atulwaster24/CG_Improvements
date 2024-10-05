@@ -6,7 +6,9 @@ const YoutubeSection = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch("/api/home?requestedData=videos");
+      const response = await fetch("/api/home?requestedData=videos", {
+        cache: "no-store",
+      });
       const data = await response.json();
       setVideosData(data);
     };
@@ -21,7 +23,7 @@ const YoutubeSection = () => {
       </h1>
       <div className="flex lg:flex-row flex-col justify-stretch items-center gap-6">
         {videosData ? (
-          videosData.map((data, i) => (
+          videosData?.map((data, i) => (
             <div
               key={i}
               className="w-3/4 lg:w-2/5 h-full mx-auto flex flex-col gap-4 lg:p-6 rounded-xl hover:shadow-xl hover:bg-gray-200"

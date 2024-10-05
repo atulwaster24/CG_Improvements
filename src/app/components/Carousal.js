@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
-import Image from "next/image";
+import { Spinner4 } from "./spinnerButton";
 
-const Carousel = ({slides}) => {
+const Carousel = ({ slides, loading }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const autoSlideInterval = 4000; // Auto slide interval in milliseconds
@@ -25,35 +25,35 @@ const Carousel = ({slides}) => {
     }, autoSlideInterval);
 
     return () => clearInterval(interval); // Cleanup on component unmount
-  }, []);
+  }, [currentSlide]); // Adding currentSlide as a dependency to rerun the effect on state change
 
   return (
     <div
       id="default-carousel"
-      className="relative border-2 border-green-200 size-full rounded-lg"
+      className="relative w-full max-w-[100%] lg:max-w-[80%] mx-auto aspect-[5/2] rounded-lg"
       data-carousel="slide"
     >
-      <div className="relative mx-auto size-full border border-red-200 overflow-hidden rounded-lg">
-        {slides.map((slide, index) => (
+      {/* Carousel wrapper */}
+      <div className="relative overflow-hidden rounded-lg min-h-full h-full">
+        {loading ? <Spinner4 /> : slides?.map((slide, index) => (
+          
           <div
-            key={index}
-            className={`absolute border-2 border-blue-800 lg:mx-auto w-full p-4 h-min inset-0 duration-700 ease-in-out transform ${
-              currentSlide === index ? "block" : "hidden"
-            }`}
-            data-carousel-item
-          >
-            <Image
-              src={slide.path}
-              height={0}
-              width={1440}
-              className="absolute w-3/6 h-auto inset-0 rounded-lg"
-              alt={`Slide ${index + 1}`}
-            />
-          </div>
+          key={index}
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+            currentSlide === index ? "opacity-100 z-10" : "opacity-0 z-0"
+          }`}
+          style={{
+            backgroundImage: `url(${slide.path})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+          }}
+        ></div>
         ))}
       </div>
+
       {/* Slider indicators */}
-      <div className="absolute z-30 flex rounded-lg bg-black/50 border border-white p-1 -translate-x-1/2 bottom-5 left-1/2 space-x-2 rtl:space-x-reverse">
+      <div className="absolute z-30 flex rounded-lg bg-black/50 border border-white p-1 -translate-x-1/2 bottom-1 md:bottom-5 left-1/2 space-x-2 rtl:space-x-reverse">
         {slides.map((_, index) => (
           <button
             key={index}
@@ -69,16 +69,17 @@ const Carousel = ({slides}) => {
           ></button>
         ))}
       </div>
+
       {/* Slider controls */}
       <button
         type="button"
-        className="absolute top-0 left-0 lg:left-10 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+        className="absolute top-0 left-2 lg:left-5 z-30 flex items-center justify-center h-full px-2 lg:px-4 cursor-pointer group focus:outline-none"
         data-carousel-prev
         onClick={prevSlide}
       >
-        <span className="inline-flex items-center justify-center border-2 border-black/40 w-7 h-7 rounded-full bg-black/30  group-hover:bg-black/75 lg:group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
+        <span className="inline-flex items-center justify-center border-2 border-black/40 w-6 h-6 lg:w-7 lg:h-7 rounded-full bg-black/30 group-hover:bg-black/75 lg:group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
           <svg
-            className="w-3 h-3  text-white rtl:rotate-180"
+            className="w-3 h-3 text-white rtl:rotate-180"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -97,13 +98,13 @@ const Carousel = ({slides}) => {
       </button>
       <button
         type="button"
-        className="absolute top-0 right-0 lg:right-10 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+        className="absolute top-0 right-2 lg:right-5 z-30 flex items-center justify-center h-full px-2 lg:px-4 cursor-pointer group focus:outline-none"
         data-carousel-next
         onClick={nextSlide}
       >
-        <span className="inline-flex items-center justify-center border-2 border-black/40  w-7 h-7 rounded-full bg-black/30  group-hover:bg-black/75 text-white lg:group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
+        <span className="inline-flex items-center justify-center border-2 border-black/40 w-6 h-6 lg:w-7 lg:h-7 rounded-full bg-black/30 group-hover:bg-black/75 lg:group-focus:ring-4 group-focus:ring-white group-focus:outline-none">
           <svg
-            className="w-3 h-3  text-white rtl:rotate-180"
+            className="w-3 h-3 text-white rtl:rotate-180"
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"

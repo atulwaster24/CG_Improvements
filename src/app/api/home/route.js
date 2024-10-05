@@ -13,13 +13,13 @@ export async function GET(req) {
   try {
     await connectToDB();
     if (requestedData === "news") {
-      const fetchedData = await news.find().sort({ _id: -1 }).limit(2);
+      const fetchedData = await news.find().sort({ date: -1 }).limit(2);
       return NextResponse.json(fetchedData, { status: 200 });
     } else if (requestedData === "carousal-images") {
-      const fetchedData = await images.find({tags: {$all: ['homepage', 'carousal']}}).sort({ _id: -1 }).limit(5);
+      const fetchedData = await images.find({tags: {$all: ['homepage', 'carousal']}}).sort({ date: -1 }).limit(5);
       return NextResponse.json(fetchedData, { status: 200 });
     } else {
-      const fetchedData = await videos.find().sort({ _id: -1 });
+      const fetchedData = await videos.find().sort({ date: -1 });
       return NextResponse.json(fetchedData, { status: 200 });
     }
   } catch (error) {

@@ -103,7 +103,7 @@ const Footer2 = () => {
                 alt="Facebook"
                 width={30}
                 height={25}
-                className="h-auto hover:scale-125 transition-transform duration-300"
+                className="hover:scale-125 transition-transform duration-300"
               />
             </a>
             <a href="https://www.instagram.com/connectgeeta/" target="_blank">
@@ -112,7 +112,7 @@ const Footer2 = () => {
                 alt="Instagram"
                 width={30}
                 height={25}
-                className="h-auto hover:scale-125 transition-transform duration-300"
+                className="hover:scale-125 transition-transform duration-300"
               />
             </a>
             <a href="https://www.youtube.com/@ConnectGeeta" target="_blank">
@@ -121,7 +121,7 @@ const Footer2 = () => {
                 alt="Youtube"
                 width={30}
                 height={25}
-                className="h-auto hover:scale-125 transition-transform duration-300"
+                className="hover:scale-125 transition-transform duration-300"
               />
             </a>
             <a href="https://x.com/mlageetajain" target="_blank">
@@ -130,7 +130,7 @@ const Footer2 = () => {
                 alt="Twitter"
                 width={30}
                 height={25}
-                className="h-auto hover:scale-125 transition-transform duration-300"
+                className="hover:scale-125 transition-transform duration-300"
               />
             </a>
           </div>
