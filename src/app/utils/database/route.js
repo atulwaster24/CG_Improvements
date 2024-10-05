@@ -11,7 +11,6 @@ export const connectToDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI, {
       dbName: "connect_geeta",
-      useNewUrlParser: true,
       autoIndex: true,
     });
 

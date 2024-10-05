@@ -1,38 +1,105 @@
-'use client';
-import React, { useEffect, useState } from 'react'
-import Masonry from '../components/Masonry';
-
-function chunkArray(array, chunkSize) {
-  console.log(array)
-  const result = [];
-  for (let i = 0; i < array.length; i += chunkSize) {
-    result.push(array.slice(i, i + chunkSize));
-  }
-  return result;
-}
+"use client";
+import React, { useEffect, useState } from "react";
+import Masonry from "../components/Masonry";
+import { set } from "mongoose";
 
 function News() {
-  const [pictures, setPictures] = useState([]);
+  const [newsData, setNewsData] = useState([]);
+  const [totalArticles, setTotalArticles] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    const fetchNewsCutouts = async () => {
-      const response = await fetch('/api/news/cutouts', { cache: 'no-store' });
+    const fetchData = async () => {
+      const response = await fetch("/api/news/cutouts?page=1", {
+        cache: "no-store",
+      });
       const data = await response.json();
-      const imagePaths = data.map((image) => image.path);
-      setPictures(imagePaths);
-    }
-    fetchNewsCutouts();
-  },[])
+      setNewsData(data.fetchedCutouts);
+      setTotalArticles(data.totalCutouts);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    setLoading(true);
+    const fetchData = async () => {
+      const response = await fetch(`/api/news/cutouts?page=${nextPage}`, {
+        cache: "no-store",
+      });
+      const data = await response.json();
+      setNewsData([...newsData, ...data.fetchedCutouts]);
+      setTotalArticles(data.totalCutouts);
+      setLoading(false);
+    };
+    fetchData();
+  };
 
   return (
-    <div className='lg:p-20 lg:pt-12'>
-      <div className=''>
-        <h1 className='text-center text-2xl lg:text-3xl text-gray-700 p-4 lg:pb-12 font-bold'>News Articles</h1>
-        <Masonry images={pictures}/>
+    <div className="lg:p-20 lg:pt-12">
+      <div className="">
+        <h1 className="text-center text-2xl lg:text-3xl text-gray-700 p-4 lg:pb-12 font-bold">
+          News Articles
+        </h1>
+        {/* Display the Masonry component with fetched images */}
+        <Masonry images={newsData?.map((news) => news.path)} />
+      </div>
+
+      <div className="w-full flex justify-center py-10">
+        {totalArticles > newsData.length ? (
+          <button
+            className={`text-md font-bold bg-CG_Blue text-CG_White rounded-xl px-4 py-2 hover:scale-105 transition-all duration-300 loading ${
+              loading
+                ? "opacity-50 cursor-not-allowed"
+                : "opacity-100 cursor-pointer"
+            }`}
+            onClick={handleLoadMore}
+          >
+            {loading ? "Loading..." : "Load More"}
+          </button>
+        ) : (
+          <p className="text-md font-semibold">
+            {totalArticles === null ? (
+              <span className="flex justify-center items-center gap-2">
+                <svg
+                  className="animate-spin"
+                  width="30"
+                  height="30"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  stroke=""
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    opacity="0.8"
+                    cx="10"
+                    cy="10"
+                    r="9"
+                    stroke="#FFCC00"
+                    strokeWidth="2"
+                  />
+                  <mask id="path-2-inside-1_2527_20936" fill="white">
+                    <path d="M18.4713 13.0345C18.9921 13.221 19.5707 12.9508 19.7043 12.414C20.0052 11.2042 20.078 9.94582 19.9156 8.70384C19.7099 7.12996 19.1325 5.62766 18.2311 4.32117C17.3297 3.01467 16.1303 1.94151 14.7319 1.19042C13.6285 0.597723 12.4262 0.219019 11.1884 0.0708647C10.6392 0.00512742 10.1811 0.450137 10.1706 1.00319C10.1601 1.55625 10.6018 2.00666 11.1492 2.08616C12.0689 2.21971 12.9609 2.51295 13.7841 2.95511C14.9023 3.55575 15.8615 4.41394 16.5823 5.45872C17.3031 6.50351 17.7649 7.70487 17.9294 8.96348C18.0505 9.89002 18.008 10.828 17.8063 11.7352C17.6863 12.2751 17.9506 12.848 18.4713 13.0345Z" />
+                  </mask>
+                  <path
+                    d="M18.4713 13.0345C18.9921 13.221 19.5707 12.9508 19.7043 12.414C20.0052 11.2042 20.078 9.94582 19.9156 8.70384C19.7099 7.12996 19.1325 5.62766 18.2311 4.32117C17.3297 3.01467 16.1303 1.94151 14.7319 1.19042C13.6285 0.597723 12.4262 0.219019 11.1884 0.0708647C10.6392 0.00512742 10.1811 0.450137 10.1706 1.00319C10.1601 1.55625 10.6018 2.00666 11.1492 2.08616C12.0689 2.21971 12.9609 2.51295 13.7841 2.95511C14.9023 3.55575 15.8615 4.41394 16.5823 5.45872C17.3031 6.50351 17.7649 7.70487 17.9294 8.96348C18.0505 9.89002 18.008 10.828 17.8063 11.7352C17.6863 12.2751 17.9506 12.848 18.4713 13.0345Z"
+                    stroke="#0E2570"
+                    strokeWidth="10"
+                    mask="url(#path-2-inside-1_2527_20936)"
+                  />
+                </svg>
+              </span>
+            ) : (
+              "No more articles to fetch."
+            )}
+          </p>
+        )}
       </div>
     </div>
-  )
+  );
 }
 
-export default News
+export default News;

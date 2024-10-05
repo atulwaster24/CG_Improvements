@@ -24,12 +24,12 @@ const Masonry = ({ images }) => {
   };
 
   // Flattening the 2D array (arrays within arrays) into a single array
-  const flattenedImages = images.flat();
+  const flattenedImages = images?.flat();
 
   return (
     <div>
       <div className="grid bg-stone-100 p-10 rounded-lg gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {flattenedImages.map((src, index) => (
+        {flattenedImages?.map((src, index) => (
           <div
             key={index}
             className="relative group w-full h-[300px] min-h-[300px] overflow-hidden rounded-lg border-4 hover:border-white hover:shadow-2xl transition-transform duration-500 ease-in-out"

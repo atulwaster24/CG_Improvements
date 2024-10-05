@@ -11,20 +11,20 @@ const Gallery = ({ images }) => {
 
   return (
     <div className="flex flex-col gap-5 justify-center items-center bg-gray-50 drop-shadow rounded-lg p-6">
-      <div className="min-h-[300px] lg:min-h-[500px] flex items-center">
+      <div className="min-h-[300px] lg:min-h-[500px] max-w-[100%] flex items-center">
         <Image
-          src={images?.[featuredImageIdx]}
+          src={images?.[featuredImageIdx] ? images[featuredImageIdx] : '/icons/placeholder.webp'}
           width={720}
           height={100}
           alt="Featured Image"
-          className="rounded-md border border-black"
+          className="rounded-md max-w-[100%] border border-black"
         />
       </div>
       <div className="flex gap-4 p-4 overflow-x-scroll">
         {images?.map((img, i) =>
           i != featuredImageIdx ? (
             <Image
-              src={img}
+              src={img ? img : "/icons/placeholder.webp"}
               width={150}
               key={i}
               height={100}

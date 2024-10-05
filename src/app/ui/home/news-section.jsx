@@ -7,7 +7,7 @@ const NewsSection = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch("/api/home?requestedData=news");
+      const response = await fetch("/api/home?requestedData=news", { cache: 'no-store'});
       const data = await response.json();
       setNewsData(data);
     };

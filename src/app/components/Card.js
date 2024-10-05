@@ -2,26 +2,30 @@ import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+const formatData = (inputDate) => {
+  let date = new Date(inputDate);
+  const options = { year: 'numeric', month: 'short', day: '2-digit' };
+
+  const formattedDate = date.toLocaleDateString('en-US', options);
+  return formattedDate;
+}
+
 const CardComponent = ({ data }) => {
   const router = useRouter();
-  console.log(data);
+  const formattedDate = formatData(data.date);
   const handleReadMore = () => {
     router.push(`/work/${data._id}`);
   };
 
   return (
     <div className="max-w-sm min-w-[260px] p-2 md:min-w-[250px] lg:min-w-[400px] min-h-[400px] bg-gray-50 rounded-lg shadow-lg">
-      <a href="">
-        {data.images[0] ? <Image src={data.images[0]} width={800} height={0} className="h-auto min-h-[200px] md:max-h-[200px] rounded-t-lg border-2" alt="image" /> : <Image src="/icons/placeholder.webp" width={800} height={0} className="h-auto md:max-h-[200px] rounded-t-lg border-2" alt="image" />}
-        
-      </a>
+        {data.images[0] ? <Image src={data.images[0]} width={800} height={100} className="h-auto min-h-[200px] md:max-h-[200px] rounded-t-lg border-2" alt="image" /> : <Image src="/icons/placeholder.webp" width={800} height={100} className="h-auto md:max-h-[200px] rounded-t-lg border-2" alt="image" />}
+        <p className="pl-4 pt-2"><span className="font-semibold">Posted: </span><i>{formattedDate}</i></p>
       <div className="flex flex-col justify-between gap-10 p-5">
-        <a href="">
           <h5 className="mb-2 text-lg lg:text-2xl font-bold tracking-tight text-black line-clamp-2">
             {data.title}
           </h5>
-        </a>
-
+          
         <button
           className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-300 bg-blue-600 hover:bg-blue-700 w-2/5"
           onClick={handleReadMore}
