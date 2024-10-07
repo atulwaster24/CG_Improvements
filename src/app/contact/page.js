@@ -15,16 +15,36 @@ const Contact = () => {
   const [sending, setSending] = useState(false);
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [error, setError] = useState(null);
+
+  const validPhoneNumber = (phoneNumber) => {
+    const regex = /^[6-9]\d{9}$/;
+    return regex.test(phoneNumber);
+  };
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+
+    if(e.target.name === 'phone'){
+      if(!validPhoneNumber(e.target.value)){
+        setError('Please enter a valid phone number');
+      } else {
+        setError(null);
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if(!validPhoneNumber(formData.phone)){
+      setError('Please enter a valid phone number');
+      console.log('Invalid phone number');
+      return;
+    }
 
     setSending(true);
 
@@ -189,13 +209,15 @@ const Contact = () => {
                     name="name"
                     handleChange={handleChange}
                     value={formData.name}
+                    error={error}
                     placeholder="Your Name"
                   />
                   <ContactInputBox
-                    type="text"
+                    type="email"
                     name="email"
                     handleChange={handleChange}
                     value={formData.email}
+                    error={error}
                     placeholder="Your Email"
                   />
                   <ContactInputBox
@@ -203,6 +225,7 @@ const Contact = () => {
                     name="phone"
                     handleChange={handleChange}
                     value={formData.phone}
+                    error={error}
                     placeholder="Your Phone"
                   />
                   <ContactTextArea
@@ -219,9 +242,10 @@ const Contact = () => {
                       ) : (
                         <button
                           type="submit"
-                          className="rounded w-full border font-semibold border-primary bg-blue-700 p-2 text-white transition hover:bg-opacity-90"
+                          disabled={error !== null}
+                          className={`rounded w-full border font-semibold border-primary bg-blue-700 p-2 ${error ? 'opacity-60' : ''} text-white transition hover:bg-opacity-90`}
                         >
-                          Send Message
+                      Send Message
                         </button>
                       )}
                     </div>
@@ -1081,7 +1105,7 @@ const ContactTextArea = ({
   );
 };
 
-const ContactInputBox = ({ type, placeholder, value, handleChange, name }) => {
+const ContactInputBox = ({ type, placeholder, value, handleChange, name, error }) => {
   return (
     <>
       <div className="mb-6">
@@ -1094,6 +1118,11 @@ const ContactInputBox = ({ type, placeholder, value, handleChange, name }) => {
           name={name}
           className="w-full rounded border border-stroke px-[14px] py-3 text-base text-body-color outline-none focus:border-primary dark:border-dark-3 dark:bg-dark dark:text-dark-6"
         />
+        {name === 'phone' && error ? (
+          <p className="text-red-500 text-[12px] font-semibold">{error}</p>
+        ) : (
+          <p className="hidden">Error</p>
+        )}
       </div>
     </>
   );
