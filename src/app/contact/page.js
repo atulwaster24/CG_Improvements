@@ -15,47 +15,78 @@ const Contact = () => {
   const [sending, setSending] = useState(false);
   const [isSuccessful, setIsSuccessful] = useState(false);
   const [failed, setFailed] = useState(false);
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({
+    name: null,
+    email: null,
+    phone: null,
+  });
 
   const validPhoneNumber = (phoneNumber) => {
     const regex = /^[6-9]\d{9}$/;
     return regex.test(phoneNumber);
   };
 
+  const validEmailAddress = (emailAddress) => {
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return regex.test(emailAddress);
+  };
+
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
 
-    if(e.target.name === 'phone'){
-      if(!validPhoneNumber(e.target.value)){
-        setError('Please enter a valid phone number');
+    let newErrors = { ...errors };
+
+    if (name === "phone") {
+      if (!validPhoneNumber(value)) {
+        newErrors.phone = "Please enter a valid phone number";
       } else {
-        setError(null);
+        newErrors.phone = null; // Clear the error if phone number is valid
+      }
+    } else if (name === "name") {
+      if (value.length < 3) {
+        newErrors.name = "Name is too short";
+      } else {
+        newErrors.name = null; // Clear the error if name is valid
+      }
+    } else if (name === "email") {
+      if (!validEmailAddress(value)) {
+        newErrors.email = "This is not a valid email address";
+      } else {
+        newErrors.email = null; // Clear the error if email is valid
       }
     }
+
+    setErrors(newErrors);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(!validPhoneNumber(formData.phone)){
-      setError('Please enter a valid phone number');
-      console.log('Invalid phone number');
+    if (!validPhoneNumber(formData.phone)) {
+      setError("Please enter a valid phone number");
+      console.log("Invalid phone number");
       return;
     }
 
     setSending(true);
 
     try {
-      const response = await fetch("/api/send-mail", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "/api/send-mail",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
         },
-        body: JSON.stringify(formData),
-      }, {cache: "no-store"});
+        { cache: "no-store" }
+      );
 
       if (response.ok) {
         setSending(false);
@@ -209,7 +240,7 @@ const Contact = () => {
                     name="name"
                     handleChange={handleChange}
                     value={formData.name}
-                    error={error}
+                    error={errors.name}
                     placeholder="Your Name"
                   />
                   <ContactInputBox
@@ -217,7 +248,7 @@ const Contact = () => {
                     name="email"
                     handleChange={handleChange}
                     value={formData.email}
-                    error={error}
+                    error={errors.email}
                     placeholder="Your Email"
                   />
                   <ContactInputBox
@@ -225,7 +256,7 @@ const Contact = () => {
                     name="phone"
                     handleChange={handleChange}
                     value={formData.phone}
-                    error={error}
+                    error={errors.phone}
                     placeholder="Your Phone"
                   />
                   <ContactTextArea
@@ -242,10 +273,20 @@ const Contact = () => {
                       ) : (
                         <button
                           type="submit"
-                          disabled={error !== null}
-                          className={`rounded w-full border font-semibold border-primary bg-blue-700 p-2 ${error ? 'opacity-60' : ''} text-white transition hover:bg-opacity-90`}
+                          disabled={
+                            errors.name !== null ||
+                            errors.email !== null ||
+                            errors.phone !== null
+                          }
+                          className={`rounded w-full border font-semibold border-primary bg-blue-700 p-2 ${
+                            errors.name !== null ||
+                            errors.email !== null ||
+                            errors.phone !== null
+                              ? "opacity-40"
+                              : ""
+                          } text-white transition hover:bg-opacity-90`}
                         >
-                      Send Message
+                          Send Message
                         </button>
                       )}
                     </div>
@@ -1081,13 +1122,7 @@ const Contact = () => {
 
 export default Contact;
 
-const ContactTextArea = ({
-  row,
-  placeholder,
-  name,
-  handleChange,
-  value,
-}) => {
+const ContactTextArea = ({ row, placeholder, name, handleChange, value }) => {
   return (
     <>
       <div className="mb-6">
@@ -1105,7 +1140,14 @@ const ContactTextArea = ({
   );
 };
 
-const ContactInputBox = ({ type, placeholder, value, handleChange, name, error }) => {
+const ContactInputBox = ({
+  type,
+  placeholder,
+  value,
+  handleChange,
+  name,
+  error,
+}) => {
   return (
     <>
       <div className="mb-6">
@@ -1118,56 +1160,10 @@ const ContactInputBox = ({ type, placeholder, value, handleChange, name, error }
           name={name}
           className="w-full rounded border border-stroke px-[14px] py-3 text-base text-body-color outline-none focus:border-primary dark:border-dark-3 dark:bg-dark dark:text-dark-6"
         />
-        {name === 'phone' && error ? (
+        {error && (
           <p className="text-red-500 text-[12px] font-semibold">{error}</p>
-        ) : (
-          <p className="hidden">Error</p>
         )}
       </div>
     </>
   );
 };
-
-// const SuccessAlert2 = () => {
-//   return (
-//     <div className="py-10 bg-white dark:bg-dark">
-//       <div className="container">
-//         <div className="border-green bg-green-light-6 flex w-full rounded-lg border-l-[6px] px-7 py-8 md:p-9">
-//           <div className="bg-green mr-5 flex h-[34px] w-full max-w-[34px] items-center justify-center rounded-md">
-//             <svg
-//               width="18"
-//               height="18"
-//               viewBox="0 0 18 18"
-//               fill="none"
-//               xmlns="http://www.w3.org/2000/svg"
-//             >
-//               <g clipPath="url(#clip0_961_15637)">
-//                 <path
-//                   d="M8.99998 0.506248C4.3031 0.506248 0.506226 4.30312 0.506226 9C0.506226 13.6969 4.3031 17.5219 8.99998 17.5219C13.6969 17.5219 17.5219 13.6969 17.5219 9C17.5219 4.30312 13.6969 0.506248 8.99998 0.506248ZM8.99998 16.2562C5.00623 16.2562 1.77185 12.9937 1.77185 9C1.77185 5.00625 5.00623 1.77187 8.99998 1.77187C12.9937 1.77187 16.2562 5.03437 16.2562 9.02812C16.2562 12.9937 12.9937 16.2562 8.99998 16.2562Z"
-//                   fill="white"
-//                 />
-//                 <path
-//                   d="M11.4187 6.38437L8.07183 9.64687L6.55308 8.15625C6.29996 7.90312 5.90621 7.93125 5.65308 8.15625C5.39996 8.40937 5.42808 8.80312 5.65308 9.05625L7.45308 10.8C7.62183 10.9687 7.84683 11.0531 8.07183 11.0531C8.29683 11.0531 8.52183 10.9687 8.69058 10.8L12.3187 7.3125C12.5718 7.05937 12.5718 6.66562 12.3187 6.4125C12.0656 6.15937 11.6718 6.15937 11.4187 6.38437Z"
-//                   fill="white"
-//                 />
-//               </g>
-//               <defs>
-//                 <clipPath id="clip0_961_15637">
-//                   <rect width="18" height="18" fill="white" />
-//                 </clipPath>
-//               </defs>
-//             </svg>
-//           </div>
-//           <div className="w-full">
-//             <h5 className="mb-3 text-lg font-semibold text-[#004434]">
-//               Message Sent Successfully
-//             </h5>
-//             <p className="text-base leading-relaxed text-body-color">
-//               Your message has been send to our team. Thank you.
-//             </p>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
