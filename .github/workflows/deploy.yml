@@ -10,15 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code locally
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js locally
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      - name: Add SSH key
+      - name: Add SSH key for EC2 access
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
@@ -27,29 +27,21 @@ jobs:
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_USER: ${{ secrets.EC2_USER }}
-          MONGO_URI: ${{ secrets.MONGO_URI }}  # Pass Mongo URI
+          MONGO_URI: ${{ secrets.MONGO_URI }}
         run: |
-          ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
-            cd ~
-
+          ssh -o StrictHostKeyChecking=no -t $EC2_USER@$EC2_HOST << 'EOF'
             # Check if the CG_Improvements directory exists
+            cd ~
             if [ ! -d "CG_Improvements" ]; then
-            # If it doesn't exist, clone the repository
-            git clone https://github.com/atulwaster24/CG_Improvements.git
+              git clone git@github.com:atulwaster24/CG_Improvements.git ~/CG_Improvements
             fi
-
-            # Navigate to the project directory
-            cd /CG_Improvements
+            cd ~/CG_Improvements
 
             # Set up environment variables
             echo "MONGO_URI=$MONGO_URI" > .env  # Create .env file with Mongo URI
 
-            # Install dependencies
+            # Install dependencies and build
             npm install
-
-            # Build the Next.js app
             npm run build
-
-            # Run the deployment script
             ./config/scripts/deploy.sh
           EOF
