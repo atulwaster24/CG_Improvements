@@ -30,6 +30,10 @@ jobs:
           MONGO_URI: ${{ secrets.MONGO_URI }}
         run: |
           ssh -o StrictHostKeyChecking=no -t $EC2_USER@$EC2_HOST << 'EOF'
+          
+            # Ensure known hosts include GitHub to avoid verification issues
+            ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+
             # Check if the CG_Improvements directory exists
             cd ~
             if [ ! -d "CG_Improvements" ]; then
