@@ -26,6 +26,12 @@ const Contact = () => {
     return regex.test(phoneNumber);
   };
 
+  const validName = (name) => {
+    const regex = /^[A-Za-z\s]{3,}$/;
+
+    return regex.test(name);
+  };
+
   const validEmailAddress = (emailAddress) => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return regex.test(emailAddress);
@@ -48,8 +54,8 @@ const Contact = () => {
         newErrors.phone = null; // Clear the error if phone number is valid
       }
     } else if (name === "name") {
-      if (value.length < 3) {
-        newErrors.name = "Name is too short";
+      if (!validName(value)) {
+        newErrors.name = "Name is not valid";
       } else {
         newErrors.name = null; // Clear the error if name is valid
       }
