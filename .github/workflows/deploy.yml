@@ -47,7 +47,11 @@ jobs:
             # Set up environment variables
             echo "MONGO_URI=$MONGO_URI" > .env
 
+            # Give execute permissions to deploy.sh
+            chmod +x ./config/scripts/deploy.sh
+
             # Run deploy script
             ./config/scripts/deploy.sh
 
           EOF
+          
