@@ -30,22 +30,24 @@ jobs:
           MONGO_URI: ${{ secrets.MONGO_URI }}
         run: |
           ssh -o StrictHostKeyChecking=no -t $EC2_USER@$EC2_HOST << 'EOF'
-          
-            # Ensure known hosts include GitHub to avoid verification issues
+
+            # Add GitHub to known hosts for SSH access
             ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 
-            # Check if the CG_Improvements directory exists
+            # Navigate to or clone the repository
             cd ~
             if [ ! -d "CG_Improvements" ]; then
               git clone git@github.com:atulwaster24/CG_Improvements.git ~/CG_Improvements
             fi
             cd ~/CG_Improvements
 
-            # Set up environment variables
-            echo "MONGO_URI=$MONGO_URI" > .env  # Create .env file with Mongo URI
+            # Fetch latest changes
+            git pull origin main
 
-            # Install dependencies and build
-            npm install
-            npm run build
+            # Set up environment variables
+            echo "MONGO_URI=$MONGO_URI" > .env
+
+            # Run deploy script
             ./config/scripts/deploy.sh
+
           EOF
