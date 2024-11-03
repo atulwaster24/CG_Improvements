@@ -2,13 +2,14 @@ import sharp from "sharp";
 import path from "path";
 import fs from "fs";
 
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: "10mb", // Increase the limit if high-resolution images are expected
+export const segmentConfig = {
+    api: {
+      bodyParser: {
+        sizeLimit: "10mb",
+      },
     },
-  },
-};
+  };
+  
 
 export async function POST(req) {
   try {
