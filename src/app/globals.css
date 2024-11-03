@@ -2,11 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* :root {
-  --foreground-rgb: 0, 0, 0;
+:root {
+  /* --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-} */
+  --background-end-rgb: 255, 255, 255; */
+  --gradient: linear-gradient(to left top, #ccc1e8, #1e7888ce);
+}
 
 /* @media (prefers-color-scheme: dark) {
   :root {
