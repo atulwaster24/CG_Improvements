@@ -20,7 +20,7 @@ fi
 npm install
 
 # Build the Next.js project
-npm run build
+npm next build
 
 # Start or restart the app with PM2
 pm2 start npm --name "$APP_NAME" -- start --watch || pm2 restart "$APP_NAME" --watch

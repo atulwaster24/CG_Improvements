@@ -29,29 +29,27 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
           MONGO_URI: ${{ secrets.MONGO_URI }}
         run: |
-          ssh -o StrictHostKeyChecking=no -t $EC2_USER@$EC2_HOST << 'EOF'
-
-            # Add GitHub to known hosts for SSH access
+          ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
+            
+            # Add GitHub to known hosts to prevent SSH prompts
             ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 
             # Navigate to or clone the repository
-            cd ~
-            if [ ! -d "CG_Improvements" ]; then
+            if [ ! -d "~/CG_Improvements" ]; then
               git clone git@github.com:atulwaster24/CG_Improvements.git ~/CG_Improvements
             fi
             cd ~/CG_Improvements
 
-            # Fetch latest changes
+            # Pull the latest changes from GitHub
             git pull origin main
 
             # Set up environment variables
             echo "MONGO_URI=$MONGO_URI" > .env
 
-            # Give execute permissions to deploy.sh
+            # Give execute permissions to deploy.sh if not set
             chmod +x ./config/scripts/deploy.sh
 
             # Run deploy script
             ./config/scripts/deploy.sh
 
           EOF
-          
