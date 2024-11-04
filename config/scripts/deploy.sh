@@ -5,7 +5,7 @@ REPO_URL="https://github.com/atulwaster24/CG_Improvements"
 PROJECT_DIR="$HOME/CG_Improvements"  # Use an absolute path in the home directory
 APP_NAME="CG_Improvements"           # PM2 app name
 DOMAIN="devs-aimpire.com"            # Your custom domain
-CERT_PATH="/etc/letsencrypt/live/www.$DOMAIN"
+CERT_PATH="/etc/letsencrypt/live/$DOMAIN"
 
 # Update the system and install Nginx if not installed
 sudo apt update
@@ -69,7 +69,7 @@ if [ ! -d "$CERT_PATH" ]; then
     sudo certbot --nginx -d www.$DOMAIN --expand --non-interactive --agree-tos -m atulw.aimpire@gmail.com
 else
     echo "SSL certificate already exists. Skipping SSL setup."
+    sudo certbot renew --dry-run
 fi
 
 # Verify auto-renewal of SSL certificate
-sudo certbot renew --dry-run
