@@ -44,7 +44,9 @@ jobs:
             git pull origin main
 
             # Set up environment variables
-            echo "MONGO_URI=$MONGO_URI" > .env
+            echo MONGO_URI="$MONGO_URI" > .env
+
+            cat .env
 
             # Give execute permissions to deploy.sh if not set
             chmod +x ./config/scripts/deploy.sh
