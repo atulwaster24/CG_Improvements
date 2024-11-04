@@ -3,24 +3,22 @@
 # Define variables
 REPO_URL="https://github.com/atulwaster24/CG_Improvements"
 PROJECT_DIR="$HOME/CG_Improvements"  # Use an absolute path in the home directory
-APP_NAME="CG_Improvements"  # PM2 app name
-DOMAIN="devs-aimpire.com"  # Domain name
+APP_NAME="CG_Improvements"           # PM2 app name
+DOMAIN="devs-aimpire.com"            # Your custom domain
+CERT_PATH="/etc/letsencrypt/live/$DOMAIN"
 
+# Update the system and install Nginx if not installed
 sudo apt update
 sudo apt install -y nginx
 
-# Install dependencies
+# Install dependencies and build the Next.js project
 npm install
-
-# Build the Next.js project
 npm run build
 
-# Check if the PM2 process with the name $APP_NAME exists
+# Check if the PM2 process with the name $APP_NAME exists and restart or start it
 if pm2 describe "$APP_NAME" > /dev/null; then
-    # If the process exists, restart it
     pm2 restart "$APP_NAME" --watch
 else
-    # If the process doesn't exist, start it
     pm2 start npm --name "$APP_NAME" -- start --watch
 fi
 
@@ -56,15 +54,22 @@ EOF
 
     # Test Nginx configuration and reload
     sudo nginx -t && sudo systemctl reload nginx
+else
+    echo "Nginx configuration for $DOMAIN already exists. Skipping Nginx setup."
 fi
 
-# Install Certbot and obtain an SSL certificate with Let's Encrypt (optional)
+# Install Certbot if not already installed
 if ! command -v certbot &> /dev/null; then
     sudo apt install -y certbot python3-certbot-nginx
 fi
 
-# Request SSL certificate for the domain
-sudo certbot --nginx -d www.$DOMAIN --non-interactive --agree-tos -m atulw.aimpire@gmail.com
+# Only request SSL certificate if it doesn't already exist
+if [ ! -d "$CERT_PATH" ]; then
+    echo "SSL certificate not found. Requesting a new SSL certificate..."
+    sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m your-email@example.com
+else
+    echo "SSL certificate already exists. Skipping SSL setup."
+fi
 
 # Verify auto-renewal of SSL certificate
 sudo certbot renew --dry-run
