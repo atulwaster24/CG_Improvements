@@ -19,7 +19,7 @@ const YoutubeSection = () => {
   return (
     <section className="w-full lg:p-10">
       <h1 className="text-2xl lg:text-3xl font-bold text-center text-gray-700 py-12">
-        Recent Videos
+        Videos
       </h1>
       <div className="flex lg:flex-row flex-col justify-stretch items-center gap-6">
         {videosData ? (
