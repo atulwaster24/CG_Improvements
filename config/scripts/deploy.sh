@@ -5,7 +5,7 @@ REPO_URL="https://github.com/atulwaster24/CG_Improvements"
 PROJECT_DIR="$HOME/CG_Improvements"  # Use an absolute path in the home directory
 APP_NAME="CG_Improvements"           # PM2 app name
 DOMAIN="devs-aimpire.com"            # Your custom domain
-CERT_PATH="/etc/letsencrypt/live/$DOMAIN"
+CERT_PATH="/etc/letsencrypt/live/www.$DOMAIN"
 
 # Update the system and install Nginx if not installed
 sudo apt update
