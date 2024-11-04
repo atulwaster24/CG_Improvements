@@ -29,30 +29,29 @@ jobs:
           EC2_USER: ${{ secrets.EC2_USER }}
           MONGO_URI: ${{ secrets.MONGO_URI }}
         run: |
-          echo "MONGO_URI (GitHub Actions environment): $MONGO_URI"  # Debug line to verify MONGO_URI is set
-          ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST << 'EOF'
-            
-            # Add GitHub to known hosts to prevent SSH prompts
-            ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-
-            # Navigate to or clone the repository
-            if [ ! -d "~/CG_Improvements" ]; then
-              git clone git@github.com:atulwaster24/CG_Improvements.git ~/CG_Improvements
-            fi
-            cd ~/CG_Improvements
-
-            # Pull the latest changes from GitHub
-            git pull origin main
-
-            # Set up environment variables
-            echo MONGO_URI="$MONGO_URI" > .env
-
-            cat .env
-
-            # Give execute permissions to deploy.sh if not set
-            chmod +x ./config/scripts/deploy.sh
-
-            # Run deploy script
-            ./config/scripts/deploy.sh
-
-          EOF
+          ssh -o StrictHostKeyChecking=no $EC2_USER@$EC2_HOST \
+            "MONGO_URI='$MONGO_URI' bash -c '
+               # Add GitHub to known hosts to prevent SSH prompts
+               ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts &&
+               
+               # Navigate to or clone the repository
+               if [ ! -d ~/CG_Improvements ]; then
+                 git clone git@github.com:atulwaster24/CG_Improvements.git ~/CG_Improvements;
+               fi &&
+               cd ~/CG_Improvements &&
+               
+               # Pull the latest changes from GitHub
+               git pull origin main &&
+               
+               # Set up environment variables
+               echo MONGO_URI=\$MONGO_URI > .env &&
+               
+               # Debug: print .env to confirm MONGO_URI value
+               cat .env &&
+               
+               # Give execute permissions to deploy.sh if not set
+               chmod +x ./config/scripts/deploy.sh &&
+               
+               # Run deploy script
+               ./config/scripts/deploy.sh
+            '"
