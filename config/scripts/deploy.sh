@@ -64,7 +64,7 @@ if ! command -v certbot &> /dev/null; then
 fi
 
 # Request SSL certificate for the domain
-sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m your-email@example.com
+sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos -m atulw.aimpire@gmail.com
 
 # Verify auto-renewal of SSL certificate
 sudo certbot renew --dry-run
