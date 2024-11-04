@@ -66,7 +66,7 @@ fi
 # Only request SSL certificate if it doesn't already exist
 if [ ! -d "$CERT_PATH" ]; then
     echo "SSL certificate not found. Requesting a new SSL certificate..."
-    sudo certbot --nginx -d www.$DOMAIN --expand --non-interactive --agree-tos -m your-email@example.com
+    sudo certbot --nginx -d www.$DOMAIN --expand --non-interactive --agree-tos -m atulw.aimpire@gmail.com
 else
     echo "SSL certificate already exists. Skipping SSL setup."
 fi
