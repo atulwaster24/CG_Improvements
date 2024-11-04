@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Add SSH key for EC2 access
         uses: webfactory/ssh-agent@v0.5.3
@@ -34,14 +34,18 @@ jobs:
                # Add GitHub to known hosts to prevent SSH prompts
                ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts &&
                
-               # Navigate to or clone the repository
-               if [ ! -d ~/CG_Improvements ]; then
-                 git clone git@github.com:atulwaster24/CG_Improvements.git ~/CG_Improvements;
-               fi &&
-               cd ~/CG_Improvements &&
-               
-               # Pull the latest changes from GitHub
-               git pull origin main &&
+               # Check if the project directory exists and handle git operations
+               if [ -d ~/CG_Improvements ]; then
+                 echo \"Directory exists. Pulling latest changes...\"
+                 cd ~/CG_Improvements
+                 git stash                   # Stash any local changes
+                 git pull origin main        # Pull the latest changes
+                 git stash pop || true       # Reapply stashed changes if there were any
+               else
+                 echo \"Directory does not exist. Cloning repository...\"
+                 git clone git@github.com:atulwaster24/CG_Improvements.git ~/CG_Improvements
+                 cd ~/CG_Improvements
+               fi
                
                # Set up environment variables
                echo MONGO_URI=\$MONGO_URI > .env &&
